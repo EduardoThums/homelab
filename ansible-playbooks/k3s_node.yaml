@@ -1,0 +1,35 @@
+- name: Install and enable QEMU Guest Agent service
+  hosts: k3s
+  become: yes  # Use sudo if needed
+
+  tasks:
+
+    - name: Add a custom APT repository
+      ansible.builtin.apt:
+        update_cache: true
+        name: qemu-guest-agent
+        state: present
+
+    - name: Enable qemu-guest-agent service
+      ansible.builtin.systemd_service:
+        name: qemu-guest-agent
+        enabled: true
+        state: started
+#         # repo: "deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription"
+#         # state: present
+#         # update_cache: yes
+#         # filename: pve-no-subscription
+
+# - name: Remove "You do not have a valid subscription for this server" warning
+#   hosts: all
+#   become: yes  # Use sudo if needed
+
+#   tasks:
+
+#     - name: Execute the command in remote shell; stdout goes to the specified file on the remote
+#       ansible.builtin.shell: sed -i.backup -z "s/res === null ||\n\s* res === undefined ||\n\s* \!res ||\n\s* res.data.status.toLowerCase() \!== 'active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+
+#     - name: Restart pveproxy service
+#       ansible.builtin.systemd:
+#         name: pveproxy.service
+#         state: restarted
