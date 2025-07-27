@@ -10,3 +10,17 @@
         state: present
         update_cache: yes
         filename: pve-no-subscription
+
+- name: Remove "You do not have a valid subscription for this server" warning
+  hosts: all
+  become: yes  # Use sudo if needed
+
+  tasks:
+
+    - name: Execute the command in remote shell; stdout goes to the specified file on the remote
+      ansible.builtin.shell: sed -i.backup -z "s/res === null ||\n\s* res === undefined ||\n\s* \!res ||\n\s* res.data.status.toLowerCase() \!== 'active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+
+    - name: Restart pveproxy service
+      ansible.builtin.systemd:
+        name: pveproxy.service
+        state: restarted
